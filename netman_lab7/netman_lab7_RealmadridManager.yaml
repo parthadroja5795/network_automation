@@ -1,0 +1,13 @@
+#ansible playbook for additional modules on realmadrid VM
+
+---
+ - name: Template module for Realmadrid
+   hosts: realmadrid
+   vars:
+    env: some kind od random variable value
+   tasks:
+    - name: sending template to the remote host
+      template:
+        src: realmadrid.conf.j2
+        dest: /home/template_file
+      become: true

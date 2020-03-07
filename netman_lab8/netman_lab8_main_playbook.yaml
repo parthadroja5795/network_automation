@@ -1,0 +1,8 @@
+#main ansible playbook for netman lab8
+
+---
+ - name: Generating router configs
+   hosts: local
+
+   roles:
+    - router

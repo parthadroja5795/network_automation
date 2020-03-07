@@ -1,0 +1,1 @@
+{"R2_adroja": "R2_adroja_ISO7200_2019-09-21T14:22:47Z.txt", "R3_adroja": "R3_adroja_ISO7200_2019-09-21T14:22:44Z.txt", "R1_adroja": "R1_adroja_ISO7200_2019-09-21T14:22:44Z.txt", "R4_adroja": "R4_adroja_ISO7200_2019-09-21T14:22:44Z.txt"}

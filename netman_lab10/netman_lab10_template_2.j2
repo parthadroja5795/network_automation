@@ -1,0 +1,40 @@
+#jinja2 template for the router configuration
+
+hostname {{ item.hostname }}
+
+interface {{ item.loopbackName }}
+ ip address {{ item.loopbackIP }}
+
+{% for int in item.interfaces -%}
+interface FastEthernet{{ int.name }}
+ ip address {{ int.IP }}
+ no shutdown
+{% endfor %}
+
+router ospf {{ item.processID }}
+{% for network in item.ospfnetworks -%}
+network {{ network.IP }} area {{ network.area }}
+{% endfor %}
+
+router bgp {{ item.ibgpAS }}
+{% for network in item.bgpnetworks -%}
+neighbor {{ network.IP }} remote-as {{ item.ibgpAS }}
+neighbor {{ network.IP }} update-source Loopback0
+{% endfor %}
+
+{% for network in item.bgpnetworks2 -%}
+neighbor {{ network.IP }} remote-as {{ item.ibgpAS }}
+neighbor {{ network.IP }} update-source Loopback0
+neighbor {{ network.IP }} route-reflector-client
+neighbor {{ network.IP }} next-hop-self
+{% endfor %}
+
+{% for network in item.bgpnetworks3 -%}
+neighbor {{ network.IP }} remote-as {{ item.ebgpAS }}
+neighbor {{ network.IP }} ebgp-multihop 2
+neighbor {{ network.IP }} update-source Loopback0
+{% endfor %}
+
+{% for network in item.advertise -%}
+network {{ network.IP }} mask 255.255.255.255
+{% endfor %}

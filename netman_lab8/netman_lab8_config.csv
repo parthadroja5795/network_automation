@@ -1,0 +1,11 @@
+﻿Hostname,Interface Type,Interface Name,IP/Subnet,OSPF Enabled,OSPF Process ID,OSPF Area
+R1,Loopback,1,10.0.0.1/32,Yes,1,0
+R1,FastEthernet,0/0,192.51.100.10/24,Yes,1,0
+R1,FastEthernet,0/1,192.51.101.10/24,Yes,1,0
+R1,FastEthernet,1/0,192.51.102.10/24,Yes,1,0
+R2,Loopback,1,20.0.0.1/32,Yes,2,0
+R2,FastEthernet,0/0,192.51.100.20/24,Yes,2,0
+R2,FastEthernet,0/1,192.51.102.20/24,Yes,2,0
+R3,Loopback,1,30.0.0.1/32,Yes,3,0
+R3,FastEthernet,0/0,192.51.100.30/24,Yes,3,0
+R3,FastEthernet,0/1,192.51.101.30/24,Yes,3,0

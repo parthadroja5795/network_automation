@@ -1,0 +1,17 @@
+#ansible var file for liverpool VM
+
+---
+ attacker: 
+  - hkewell
+  - mowen
+ defender:
+  - jcarragher
+  - dagger
+ captain:
+  - sgerrard
+ hostname:
+  - liverpool
+ captainbio:
+   fullname: Steven Gerrard
+   nationality: England
+   username: sgerrard

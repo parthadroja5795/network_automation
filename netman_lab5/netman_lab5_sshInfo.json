@@ -1,0 +1,1 @@
+{"R1": {"username": "netman", "password": "netman", "device_type": "cisco_ios", "ip": "198.51.100.1"}, "R2": {"username": "netman", "password": "netman", "device_type": "cisco_ios", "ip": "198.51.100.3"}}

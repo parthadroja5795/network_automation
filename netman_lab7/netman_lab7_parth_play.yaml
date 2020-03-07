@@ -1,0 +1,173 @@
+#main ansible playbook for netman lab7
+
+---
+ - name: Netman Automation Lab 3
+   hosts: clubs
+   tasks:
+     - name: install modules
+       yum:
+         name: "{{item}}"
+         state: present
+         update_cache: true
+       become: true
+       loop:
+        - httpd
+        - ftp
+        - epel-release
+        - python-pip
+        - expect
+     - name: Creating the 3 required groups
+       group:
+        name: "{{item}}"
+        state: present
+       loop:
+        - Attack
+        - Defense
+        - Captain
+       become: true
+     - name: Creating 3 directory with required permission and ownership
+       file:
+        path: "/home/{{item.name}}"
+        owner: root
+        group: "{{item.name}}"
+        mode: "{{item.mode}}"
+        state: directory
+       with_items:
+        - { name: 'Attack', mode: '0666'}
+        - { name: 'Defense', mode: '0111'}
+        - { name: 'Captain', mode: '0777'}
+       become: true
+     - name: Creating Attacking users
+       user:
+         name: "{{item}}"
+         password: '$6$QfTsd7CCr2PRN1$Vewknza7L2NxutNagYAzJqREWYFmuGFkln1sLk1dktD4VCAgncN3oPSHuVlRhFmwHuZ0QJVA1Uh8UIk.Y3Zfp1'
+         groups: Attack
+         state: present
+         shell: /bin/bash
+         system: no
+         createhome: yes
+         home: "/home/{{item}}"
+       with_items:
+         - "{{attacker}}"
+       become: true
+     - name: Creating Defending users
+       user:
+         name: "{{item}}"
+         password: '$6$QfTsd7CCr2PRN1$Vewknza7L2NxutNagYAzJqREWYFmuGFkln1sLk1dktD4VCAgncN3oPSHuVlRhFmwHuZ0QJVA1Uh8UIk.Y3Zfp1'
+         groups: Defense
+         state: present
+         shell: /bin/bash
+         system: no
+         createhome: yes
+         home: "/home/{{item}}"
+       with_items:
+         - "{{defender}}"
+       become: true
+     - name: Creating Captain users
+       user:
+         name: "{{item}}"
+         password: '$6$QfTsd7CCr2PRN1$Vewknza7L2NxutNagYAzJqREWYFmuGFkln1sLk1dktD4VCAgncN3oPSHuVlRhFmwHuZ0QJVA1Uh8UIk.Y3Zfp1'
+         groups: Captain, wheel
+         state: present
+         shell: /bin/bash
+         system: no
+         createhome: yes
+         home: "/home/{{item}}"
+       with_items:
+         - "{{captain}}"
+       become: true
+     - name: Creating directories for storing route information
+       file:
+        path: "/{{item.name}}_Admin/Route_Info"
+        owner: "{{item.user}}"
+        group: Captain
+        mode: 0774
+        state: directory
+       with_items:
+        - { name: "{{hostname[0]}}", user: "{{captain[0]}}"}
+       become: true
+     - name: Saving captain information in a file
+       copy:
+         dest: "/{{item.name}}_Admin/Route_Info/Captain.txt"
+         content: "The full name of the captain is {{item.user.fullname}}. He is from {{item.user.nationality}} and his username is {{item.user.username}}\n."
+       with_items:
+        - { name: "{{hostname[0]}}", user: "{{captainbio}}"}
+       become: true
+     - name: Saving route and process information locally on hosts
+       shell: "{{item}}"
+       become: true
+       with_items:
+        - ps -ef --sort=-%mem | head -n 11 > /"{{hostname[0]}}"_Admin/Route_Info/process.txt
+        - netstat -r > /"{{hostname[0]}}"_Admin/Route_Info/routeinfo.txt
+     - name: secure copy the routeinfo files
+       expect:
+        command: scp /"{{item}}"_Admin/Route_Info/routeinfo.txt root@192.168.56.115:/home/routeinfo_copy_"{{item}}".txt
+        responses:
+          root@192.168.56.115's password: "netman"
+       become: true
+       with_items:
+         - "{{hostname[0]}}"
+     - name: secure copy the processinfo files
+       expect:
+        command: scp /"{{item}}"_Admin/Route_Info/process.txt root@192.168.56.115:/home/process_copy_"{{item}}".txt
+        responses:
+          root@192.168.56.115's password: "netman"
+       become: true
+       with_items:
+         - "{{hostname[0]}}"
+     - name: assemble files
+       assemble:
+           src: /root/pub_keys
+           dest: "/root/.ssh/{{item}}_authorizedKeys.txt"
+       become: true
+       with_items:
+        - "{{hostname[0]}}"
+     - name: copy the authorized key file to the FIFA admin
+       expect:
+         command: scp /root/.ssh/"{{item}}"_authorizedKeys.txt root@192.168.56.115:/root/.ssh/{{item}}_authorizedKeys_copy.txt
+         responses:
+            root@192.168.56.115's password: "netman"
+       become: true
+       with_items:
+          - "{{hostname[0]}}"
+
+ - name: Additional modules in Ansible
+   hosts: liverpool
+   tasks:
+     - name: set_fact (Set a fact)
+       set_fact:
+         my_variable: You are on the Liverpool host.
+       when: hostname[0] == "liverpool"
+     - name: Display the fact
+       debug:
+         msg: "{{ my_variable }}"
+     - name: using the above module
+       copy:
+         dest: /home/testing.txt
+         content: "Message: {{my_variable}}"
+       become: true
+     - name: wait_for (Wait for some task to finish before continuing)
+       wait_for:
+         path: /home/parth
+     - name: group_by module
+       group_by:
+         key: "{{ hostname[0] }}-parth"
+
+ - name: do something with this newly created group_by
+   hosts: liverpool-parth
+   tasks:
+     - name: write to file
+       copy:
+         dest: /root/parth_group.txt
+         content: "Hi this is Parth Adroja"
+       become: true
+ - name: Template module for Realmadrid
+   hosts: realmadrid
+   vars:
+    env: some kind od random variable value
+   tasks:
+    - name: sending template to the remove host
+      template:
+        src: realmadrid.conf.j2
+        dest: /home/template_file
+      become: true

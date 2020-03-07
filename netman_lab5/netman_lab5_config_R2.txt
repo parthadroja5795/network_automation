@@ -1,0 +1,134 @@
+Building configuration...
+
+Current configuration : 1768 bytes
+!
+! Last configuration change at 23:29:18 UTC Tue Aug 27 2019 by netman
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+!
+hostname R2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+no ip icmp rate-limit unreachable
+ip cef
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name lab
+no ipv6 cef
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+username netman privilege 15 password 0 netman
+!
+!
+ip tcp synwait-time 5
+ip ssh version 2
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip address 20.20.20.1 255.255.255.255
+!
+interface Loopback2
+ ip address 22.22.22.1 255.255.255.255
+!
+interface FastEthernet0/0
+ ip address 198.51.100.3 255.255.255.0
+ speed auto
+ duplex auto
+!
+interface FastEthernet0/1
+ no ip address
+ shutdown
+ speed auto
+ duplex auto
+!
+interface FastEthernet1/0
+ no ip address
+ shutdown
+ speed auto
+ duplex auto
+!
+interface FastEthernet1/1
+ no ip address
+ shutdown
+ speed auto
+ duplex auto
+!
+interface GigabitEthernet2/0
+ no ip address
+ shutdown
+ negotiation auto
+!
+router ospf 100
+ network 20.20.20.1 0.0.0.0 area 100
+ network 22.22.22.1 0.0.0.0 area 100
+ network 198.51.100.0 0.0.0.255 area 100
+!
+router bgp 100
+ bgp log-neighbor-changes
+ neighbor 10.10.10.1 remote-as 100
+ neighbor 10.10.10.1 update-source Loopback1
+ neighbor 11.11.11.1 remote-as 100
+ neighbor 11.11.11.1 update-source Loopback2
+ neighbor 198.51.100.1 remote-as 100
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ login local
+ transport input all
+line vty 5 15
+ login local
+ transport input all
+!
+!
+end

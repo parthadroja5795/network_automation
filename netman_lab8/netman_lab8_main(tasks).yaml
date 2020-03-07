@@ -1,0 +1,7 @@
+#ansible task file for netman lab8
+
+---
+ - name: Generate config file for R1,R2,R3
+   template: src=netman_lab8_template.j2 dest=/home/netman/netman_lab8_{{item.hostname}}_config.txt
+   with_items:
+    - "{{ routers }}"

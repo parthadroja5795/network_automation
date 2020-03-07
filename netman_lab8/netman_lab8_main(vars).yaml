@@ -1,0 +1,39 @@
+#ansible var file containing all required configuration information
+
+---
+routers:
+ - hostname: R1
+   loopbackName: loopback 1
+   loopbackIP: 10.0.0.1 255.255.255.255
+   processID: 1
+   interfaces:
+        - { name: 0/0, IP: 198.51.100.10 255.255.255.0} 
+        - { name: 0/1, IP: 198.51.101.10 255.255.255.0} 
+        - { name: 1/0, IP: 198.51.102.10 255.255.255.0} 
+   ospfnetworks:
+        - { IP: 10.0.0.1 0.0.0.0, area: 0 }
+        - { IP: 198.51.100.10 0.0.0.255, area: 0 }
+        - { IP: 198.51.101.10 0.0.0.255, area: 0 }
+        - { IP: 198.51.102.10 0.0.0.255, area: 0 }
+ - hostname: R2
+   loopbackName: loopback 1
+   loopbackIP: 20.0.0.1 255.255.255.255
+   processID: 2
+   interfaces:
+        - { name: 0/0, IP: 198.51.100.20 255.255.255.0} 
+        - { name: 1/0, IP: 198.51.102.20 255.255.255.0} 
+   ospfnetworks:
+        - { IP: 20.0.0.1 0.0.0.0, area: 0 }
+        - { IP: 198.51.100.20 0.0.0.255, area: 0 }
+        - { IP: 198.51.102.20 0.0.0.255, area: 0 }
+ - hostname: R3
+   loopbackName: loopback 1
+   loopbackIP: 30.0.0.1 255.255.255.255
+   processID: 3
+   interfaces:
+        - { name: 0/0, IP: 198.51.100.30 255.255.255.0} 
+        - { name: 0/1, IP: 198.51.101.30 255.255.255.0} 
+   ospfnetworks:
+        - { IP: 30.0.0.1 0.0.0.0, area: 0 }
+        - { IP: 198.51.100.30 0.0.0.255, area: 0 }
+        - { IP: 198.51.101.30 0.0.0.255, area: 0 }

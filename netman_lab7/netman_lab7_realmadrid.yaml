@@ -1,0 +1,17 @@
+#ansible var file for realmadrid VM
+
+---
+ attacker:
+  - lfigo
+  - rsoldado
+ defender:
+  - rcarlos
+  - fcannavaro
+ captain:
+  - zzidane
+ hostname:
+  - realmadrid
+ captainbio:
+   fullname: Zinedine Zidane
+   nationality: Italy
+   username: zzidane

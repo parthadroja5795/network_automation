@@ -1,0 +1,12 @@
+#main ansible playbook for netman lab10
+
+---
+ - name: Generate config files for E2,E3,E4,C1,C2
+   template: src=netman_lab10_template_2.j2 dest=/home/netman/netman_lab10_{{item.hostname}}_config.txt
+   with_items:
+    - "{{ routers }}"
+
+ - name: Generate config file for E1
+   template: src=netman_lab10_template_1.j2 dest=/home/netman/netman_lab10_{{item.hostname}}_config.txt
+   with_items:
+    - "{{ edge1 }}"

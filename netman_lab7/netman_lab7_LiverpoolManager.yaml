@@ -1,0 +1,33 @@
+#ansible playbook for additional modules on liverpool VM
+
+---
+ - name: Additional modules in Ansible
+   hosts: liverpool
+   tasks:
+     - name: set_fact (Set a fact)
+       set_fact:
+         my_variable: You are on the Liverpool host.
+       when: hostname[0] == "liverpool"
+     - name: Display the fact
+       debug:
+         msg: "{{ my_variable }}"
+     - name: using the above module  
+       copy:
+         dest: /home/testing.txt
+         content: "Message: {{my_variable}}"
+       become: true
+     - name: wait_for (Wait for some task to finish before continuing)
+       wait_for:
+         path: /home/parth
+     - name: group_by module
+       group_by:
+         key: "{{ hostname[0] }}-parth"
+
+ - name: do something with this newly created group_by
+   hosts: liverpool-parth
+   tasks:
+     - name: write to file
+       copy:
+         dest: /root/parth_group.txt
+         content: "Hi!! This is Parth Adroja."
+       become: true

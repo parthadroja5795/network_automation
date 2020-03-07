@@ -1,0 +1,54 @@
+#ansible playbook for iBGP configuration
+
+---
+ - name: configure iBGP on R1
+   hosts: R1
+   gather_facts: true
+   connection: local
+
+   vars:
+    ios_provider:
+     username: netman
+     password: netman
+     host: "{{ansible_host}}"
+   tasks:
+    - name: sending config on R1
+      ios_config:
+        commands:
+          - router ospf 100
+          - network 198.51.100.0 0.0.0.255 area 100
+          - network 10.10.10.1 0.0.0.0 area 100
+          - network 11.11.11.1 0.0.0.0 area 100
+          - router bgp 100
+          - neighbor 20.20.20.1 remote-as 100
+          - neighbor 20.20.20.1 update-source loopback 1
+          - neighbor 22.22.22.1 remote-as 100
+          - neighbor 22.22.22.1 update-source loopback 2
+          - neighbor 198.51.100.20 remote-as 100
+        provider: "{{ios_provider}}"
+
+ - name: configure iBGP on R2
+   hosts: R2
+   gather_facts: true
+   connection: local
+
+   vars:
+    ios_provider:
+     username: netman
+     password: netman
+     host: "{{ansible_host}}"
+   tasks:
+    - name: sending config on R2
+      ios_config:
+        commands:
+          - router ospf 100
+          - network 198.51.100.0 0.0.0.255 area 100
+          - network 20.20.20.1 0.0.0.0 area 100
+          - network 22.22.22.1 0.0.0.0 area 100
+          - router bgp 100
+          - neighbor 10.10.10.1 remote-as 100
+          - neighbor 10.10.10.1 update-source loopback 1
+          - neighbor 11.11.11.1 remote-as 100
+          - neighbor 11.11.11.1 update-source loopback 2
+          - neighbor 198.51.100.10 remote-as 100
+        provider: "{{ios_provider}}"
